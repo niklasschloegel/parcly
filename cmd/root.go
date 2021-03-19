@@ -23,7 +23,9 @@ import (
 )
 
 var cfgFile string
-var tracktryApiKey string
+var TracktryApiKey string
+
+const BasePath = "https://api.tracktry.com/v1"
 
 var rootCmd = &cobra.Command{
 	Use:   "parcly",

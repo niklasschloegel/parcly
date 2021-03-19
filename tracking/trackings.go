@@ -1,7 +1,29 @@
 package tracking
 
-import "time"
+import (
+	"time"
 
+	"github.com/niklasschloegel/parcly/cmd"
+)
+
+//----------------STRUCTS-------------------
+//------------Tracking Creation-------------
+type TrackingCreation struct {
+	TrackingNumber           string `json:"tracking_number"`
+	CarrierCode              string `json:"carrier_code"`
+	DestinationCode          string `json:"destination_code,omitempty"`
+	TrackingShipDate         string `json:"tracking_ship_date,omitempty"`
+	TrackingPostalCode       string `json:"tracking_postal_code,omitempty"`
+	TrackingAccountNumber    string `json:"tracking_account_number,omitempty"`
+	SpecialNumberDestination string `json:"specialNumberDestination,omitempty"`
+	Order                    string `json:"order,omitempty"`
+	OrderCreateTime          string `json:"order_create_time,omitempty"`
+	Lang                     string `json:"lang,omitempty"`
+	AutoCorrect              string `json:"auto_correct,omitempty"`
+	Comment                  string `json:"comment,omitempty"`
+}
+
+//------------Tracking Response------------
 type TrackingResponse struct {
 	Meta struct {
 		Code    int    `json:"code"`
@@ -50,4 +72,18 @@ type TrackInfo struct {
 	StatusDescription string    `json:"StatusDescription"`
 	Details           string    `json:"Details"`
 	CheckpointStatus  string    `json:"checkpoint_status"`
+}
+
+//--------------FUNCTIONS-------------------
+
+func createTracking(tracking TrackingCreation) TrackingResponse {
+	url := cmd.BasePath + "/trackings/realtime"
+	trackingResponse := TrackingResponse{}
+
+	err := DoRequest("POST", url, tracking, &trackingResponse)
+	if err != nil {
+		panic(err)
+	}
+
+	return trackingResponse
 }
