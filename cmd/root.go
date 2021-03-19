@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
+Copyright © 2021 Niklas Schlögel <niklasschloegel@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-	"os"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -25,20 +23,16 @@ import (
 )
 
 var cfgFile string
+var tracktryApiKey string
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "parcly",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "Simply tracks parcels",
+	Long:  `Parcly is a tool for tracking parcels.`,
+	// Run: func(cmd *cobra.Command, args []string) {
+	// 	fmt.Printf("API KEY IS: %s\n", tracktryApiKey)
+	// 	fmt.Println(viper.AllKeys())
+	// },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -55,6 +49,7 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.parcly.yaml)")
+	rootCmd.PersistentFlags().StringVar(&tracktryApiKey, "tracktrykey", "", "Tracktry API Key")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -76,10 +71,12 @@ func initConfig() {
 		viper.SetConfigName(".parcly")
 	}
 
+	viper.SetEnvPrefix("parcly")
 	viper.AutomaticEnv() // read in environment variables that match
+	tracktryApiKey = viper.GetString("tracktrykey")
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		tracktryApiKey = viper.GetString("tracktrykey")
 	}
 }
