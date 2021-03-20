@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/niklasschloegel/parcly/cmd"
+	"github.com/niklasschloegel/parcly/config"
 )
 
 func DoRequest(method, url string, requestStruct, responseStruct interface{}) error {
@@ -29,7 +29,7 @@ func DoRequest(method, url string, requestStruct, responseStruct interface{}) er
 	}
 
 	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("Tracktry-Api-Key", cmd.TracktryApiKey)
+	request.Header.Set("Tracktry-Api-Key", config.TracktryApiKey)
 
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
@@ -45,4 +45,5 @@ func DoRequest(method, url string, requestStruct, responseStruct interface{}) er
 		return err
 	}
 
+	return nil
 }

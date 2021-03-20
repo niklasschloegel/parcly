@@ -1,7 +1,10 @@
 package tracking
 
 import (
-	"github.com/niklasschloegel/parcly/cmd"
+	"fmt"
+	"sort"
+
+	"github.com/niklasschloegel/parcly/config"
 )
 
 type CarrierResponse struct {
@@ -20,6 +23,10 @@ type Carrier struct {
 	Picture  string `json:"picture"`
 }
 
+func (c Carrier) Info() string {
+	return fmt.Sprintf("[%s] - code: %s", c.Name, c.Code)
+}
+
 type CarrierDetection struct {
 	Meta struct {
 		Code    int    `json:"code"`
@@ -34,14 +41,20 @@ type DetectionData struct {
 	Code string `json:"code"`
 }
 
-func GetCarriers() []CarrierResponse {
-	url := cmd.BasePath + "/carriers"
-	carrierResponses := []CarrierResponse{}
+func GetCarriers() []Carrier {
+	url := config.BasePath + "/carriers"
+	carrierResponse := CarrierResponse{}
 
-	err := DoRequest("GET", url, nil, &carrierResponses)
+	err := DoRequest("GET", url, nil, &carrierResponse)
 	if err != nil {
 		panic(err)
 	}
 
-	return carrierResponses
+	carriers := carrierResponse.Carriers
+
+	sort.Slice(carriers, func(i, j int) bool {
+		return carriers[i].Name < carriers[j].Name
+	})
+
+	return carriers
 }

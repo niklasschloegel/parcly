@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/niklasschloegel/parcly/config"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -23,18 +24,11 @@ import (
 )
 
 var cfgFile string
-var TracktryApiKey string
-
-const BasePath = "https://api.tracktry.com/v1"
 
 var rootCmd = &cobra.Command{
 	Use:   "parcly",
 	Short: "Simply tracks parcels",
 	Long:  `Parcly is a tool for tracking parcels.`,
-	// Run: func(cmd *cobra.Command, args []string) {
-	// 	fmt.Printf("API KEY IS: %s\n", tracktryApiKey)
-	// 	fmt.Println(viper.AllKeys())
-	// },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -51,7 +45,7 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.parcly.yaml)")
-	rootCmd.PersistentFlags().StringVar(&tracktryApiKey, "tracktrykey", "", "Tracktry API Key")
+	rootCmd.PersistentFlags().StringVar(&config.TracktryApiKey, "tracktrykey", "", "Tracktry API Key")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -75,10 +69,10 @@ func initConfig() {
 
 	viper.SetEnvPrefix("parcly")
 	viper.AutomaticEnv() // read in environment variables that match
-	tracktryApiKey = viper.GetString("tracktrykey")
+	config.TracktryApiKey = viper.GetString("tracktrykey")
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		tracktryApiKey = viper.GetString("tracktrykey")
+		config.TracktryApiKey = viper.GetString("tracktrykey")
 	}
 }

@@ -3,7 +3,7 @@ package tracking
 import (
 	"time"
 
-	"github.com/niklasschloegel/parcly/cmd"
+	"github.com/niklasschloegel/parcly/config"
 )
 
 //----------------STRUCTS-------------------
@@ -76,8 +76,8 @@ type TrackInfo struct {
 
 //--------------FUNCTIONS-------------------
 
-func createTracking(tracking TrackingCreation) TrackingResponse {
-	url := cmd.BasePath + "/trackings/realtime"
+func CreateTracking(tracking TrackingCreation) TrackingResponse {
+	url := config.BasePath + "/trackings/realtime"
 	trackingResponse := TrackingResponse{}
 
 	err := DoRequest("POST", url, tracking, &trackingResponse)
