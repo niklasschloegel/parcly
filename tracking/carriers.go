@@ -24,7 +24,7 @@ type Carrier struct {
 }
 
 func (c Carrier) Info() string {
-	return fmt.Sprintf("[%s] - code: %s", c.Name, c.Code)
+	return nameCodeFormat(c.Name, c.Code)
 }
 
 type CarrierDetection struct {
@@ -35,10 +35,17 @@ type CarrierDetection struct {
 	} `json:"meta"`
 	Data []DetectionData `json:"data"`
 }
-
 type DetectionData struct {
 	Name string `json:"name"`
 	Code string `json:"code"`
+}
+
+type DetectionRequest struct {
+	TrackingNumber string `json:"tracking_number"`
+}
+
+func (c DetectionData) Info() string {
+	return nameCodeFormat(c.Name, c.Code)
 }
 
 func GetCarriers() []Carrier {
@@ -57,4 +64,20 @@ func GetCarriers() []Carrier {
 	})
 
 	return carriers
+}
+
+func Detect(trackingNr string) []DetectionData {
+	url := config.BasePath + "/carriers/detect"
+	carrierDetection := CarrierDetection{}
+	requestBody := DetectionRequest{TrackingNumber: trackingNr}
+
+	err := DoRequest("POST", url, requestBody, &carrierDetection)
+	if err != nil {
+		panic(err)
+	}
+	return carrierDetection.Data
+}
+
+func nameCodeFormat(n, c string) string {
+	return fmt.Sprintf("[%s] - code: %s", n, c)
 }

@@ -20,12 +20,14 @@ func DoRequest(method, url string, requestStruct, responseStruct interface{}) er
 			return err
 		}
 		request, err = http.NewRequest(method, url, bytes.NewBuffer(data))
+		if err != nil {
+			return err
+		}
 	} else {
 		request, err = http.NewRequest(method, url, nil)
-	}
-
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
 	request.Header.Set("Content-Type", "application/json")
