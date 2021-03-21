@@ -23,9 +23,10 @@ import (
 )
 
 var carriersListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Lists available carriers",
-	Long:  `Lists all available carriers.`,
+	Use:     "list",
+	Short:   "Lists available carriers",
+	Long:    `Lists all available carriers.`,
+	Aliases: []string{"ls"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		carriers := tracking.GetCarriers()
@@ -38,9 +39,10 @@ var carriersListCmd = &cobra.Command{
 var trackingDetail bool
 
 var trackingListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Lists all trackings",
-	Long:  `Lists all registered tracking items.`,
+	Use:     "list",
+	Short:   "Lists all trackings",
+	Long:    `Lists all registered tracking items.`,
+	Aliases: []string{"ls"},
 	Run: func(cmd *cobra.Command, args []string) {
 		allTrackings := tracking.GetTrackings()
 		if len(allTrackings) > 0 {

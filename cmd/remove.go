@@ -54,6 +54,6 @@ var removeCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(removeCmd)
+	trackingCmd.AddCommand(removeCmd)
 	removeCmd.PersistentFlags().StringVarP(&carrierCode, "carrier", "c", "", "Defines carrier of parcel")
 }
