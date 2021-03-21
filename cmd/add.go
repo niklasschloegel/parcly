@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var carrierCode string
+var carrierCode, shipDate, postalCode, specNumberDest, orderID, title string
 
 var addCmd = &cobra.Command{
 	Use:   "add <trackingNr>",
@@ -45,7 +45,17 @@ for the specific carrier code
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 1 {
 			trackingNr := args[0]
+			allTrackings := tracking.GetTrackings()
+
+			for _, t := range allTrackings {
+				if t.TrackingNumber == trackingNr {
+					fmt.Println("Tracking with tracking number", trackingNr, "already added.")
+					return
+				}
+			}
+
 			trackingCreation := tracking.TrackingCreation{TrackingNumber: trackingNr}
+			addOptions(&trackingCreation)
 
 			if carrierCode != "" {
 				trackingCreation.CarrierCode = carrierCode
@@ -57,10 +67,10 @@ for the specific carrier code
 						fmt.Println(c.Info())
 					}
 				} else {
-					fmt.Println("No matching carrier found for tracking number:", trackingNr)
+					fmt.Println("No matching carrier found for tracking number", trackingNr)
 					return
 				}
-				fmt.Print("Please enter the applicable carrier code:")
+				fmt.Print("Please enter the applicable carrier code: ")
 				var code string
 				_, err := fmt.Scan(&code)
 				if err != nil {
@@ -79,5 +89,30 @@ for the specific carrier code
 
 func init() {
 	trackingCmd.AddCommand(addCmd)
+
 	addCmd.PersistentFlags().StringVarP(&carrierCode, "carrier", "c", "", "Defines carrier of parcel")
+	addCmd.PersistentFlags().StringVar(&shipDate, "shipdate", "", "Shipping date in YYYYMMDD format. Required by some couriers, such as deutsche-post")
+	addCmd.PersistentFlags().StringVar(&postalCode, "postalcode", "", "Postal code of receiver's address. Required by some couriers, such as postnl-3s")
+	addCmd.PersistentFlags().StringVar(&specNumberDest, "special", "", "Destination Country of the shipment for a specific couriers, such as postnl-3s")
+	addCmd.PersistentFlags().StringVarP(&orderID, "orderid", "o", "", "Order ID of parcel")
+	addCmd.PersistentFlags().StringVarP(&title, "title", "t", "", "Title for parcel (e.g. content of parcel)")
+
+}
+
+func addOptions(t *tracking.TrackingCreation) {
+	if shipDate != "" {
+		t.TrackingShipDate = shipDate
+	}
+	if postalCode != "" {
+		t.TrackingPostalCode = postalCode
+	}
+	if specNumberDest != "" {
+		t.SpecialNumberDestination = specNumberDest
+	}
+	if orderID != "" {
+		t.Order = orderID
+	}
+	if title != "" {
+		t.Comment = title
+	}
 }

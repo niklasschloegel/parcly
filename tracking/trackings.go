@@ -77,12 +77,24 @@ type TrackInfo struct {
 	CheckpointStatus  string `json:"checkpoint_status"`
 }
 
+type DeletionResponse struct {
+	Meta struct {
+		Code    int    `json:"code"`
+		Type    string `json:"type"`
+		Message string `json:"message"`
+	} `json:"meta"`
+	Data []interface{} `json:"data"`
+}
+
 func (t TrackingData) ShortInfo() string {
 	var title string
-	if t.Title != "" {
-		title = t.Title
+	if t.Comment != "" {
+		title = t.Comment
 	} else {
 		title = "A parcel"
+	}
+	if t.OrderID != "" {
+		title += fmt.Sprintf("(#%s)", t.OrderID)
 	}
 	return fmt.Sprintf("[%s]\t@ %s - %s from %s (%s)", t.Status, t.UpdatedAt, title, t.CarrierCode, t.TrackingNumber)
 }
@@ -123,4 +135,14 @@ func GetTrackings() []TrackingData {
 	}
 
 	return trackingResponse.Data.Items
+}
+
+func DeleteTracking(carrierCode, trackingNumber string) {
+	url := fmt.Sprintf("%s/trackings/%s/%s", config.BasePath, carrierCode, trackingNumber)
+	deletionResponse := DeletionResponse{}
+
+	err := DoRequest("DELETE", url, nil, &deletionResponse)
+	if err != nil {
+		panic(err)
+	}
 }
