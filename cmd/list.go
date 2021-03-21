@@ -40,7 +40,14 @@ var trackingListCmd = &cobra.Command{
 	Short: "Lists all trackings",
 	Long:  `Lists all registered tracking items.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		allTrackings := tracking.GetTrackings()
+		if len(allTrackings) > 0 {
+			for _, t := range allTrackings {
+				fmt.Println(t.ShortInfo())
+			}
+		} else {
+			fmt.Println("No parcels tracked.")
+		}
 	},
 }
 

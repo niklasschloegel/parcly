@@ -3,6 +3,7 @@ package tracking
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -36,6 +37,10 @@ func DoRequest(method, url string, requestStruct, responseStruct interface{}) er
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return err
+	}
+
+	if resp.StatusCode != 200 {
+		fmt.Println(resp.Status, resp.StatusCode)
 	}
 
 	responseBytes, err := ioutil.ReadAll(resp.Body)

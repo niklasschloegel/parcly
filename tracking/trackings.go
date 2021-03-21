@@ -1,7 +1,7 @@
 package tracking
 
 import (
-	"time"
+	"fmt"
 
 	"github.com/niklasschloegel/parcly/config"
 )
@@ -30,37 +30,52 @@ type TrackingResponse struct {
 		Type    string `json:"type"`
 		Message string `json:"message"`
 	} `json:"meta"`
+	Data TrackingData `json:"data"`
+}
+
+type TrackingItems struct {
+	Meta struct {
+		Code    int    `json:"code"`
+		Type    string `json:"type"`
+		Message string `json:"message"`
+	} `json:"meta"`
 	Data struct {
-		Id              string     `json:"id"`
-		TrackingNumber  string     `json:"tracking_number"`
-		CarrierCode     string     `json:"carrier_code"`
-		Status          string     `json:"status"`
-		CreatedAt       time.Time  `json:"created_at"`
-		UpdatedAt       time.Time  `json:"updated_at"`
-		OrderCreateTime time.Time  `json:"order_create_time"`
-		CustomerEmail   []string   `json:"customer_email"`
-		Title           string     `json:"title"`
-		OrderID         string     `json:"order_id"`
-		Comment         string     `json:"comment"`
-		CustomerName    string     `json:"customer_name"`
-		Archived        bool       `json:"archived"`
-		OriginalCountry string     `json:"original_country"`
-		ItemTimeLength  int        `json:"itemTimeLength"`
-		StayTimeLength  int        `json:"stayTimeLength"`
-		OriginInfo      OriginInfo `json:"origin_info"`
-		ServiceCode     string     `json:"service_code"`
-		LastEvent       string     `json:"lastEvent"`
-		LastUpdateTime  time.Time  `json:"lastUpdateTime"`
+		Page  int            `json:"page"`
+		Limit int            `json:"limit"`
+		Total string         `json:"total"`
+		Items []TrackingData `json:"items"`
 	} `json:"data"`
 }
 
-type OriginInfo struct {
-	ItemReceived       time.Time   `json:"ItemReceived"`
-	ItemDispatched     time.Time   `json:"ItemDispatched"`
-	DepartfromAirport  time.Time   `json:"DepartfromAirport"`
-	ArrivalfromAbroad  time.Time   `json:"ArrivalfromAbroad"`
-	CustomsClearance   time.Time   `json:"CustomsClearance"`
-	DestinationArrived time.Time   `json:"DestinationArrived"`
+type TrackingData struct {
+	Id              string      `json:"id"`
+	TrackingNumber  string      `json:"tracking_number"`
+	CarrierCode     string      `json:"carrier_code"`
+	Status          string      `json:"status"`
+	CreatedAt       string      `json:"created_at"`
+	UpdatedAt       string      `json:"updated_at"`
+	OrderCreateTime string      `json:"order_create_time"`
+	Title           string      `json:"title"`
+	OrderID         string      `json:"order_id"`
+	Comment         string      `json:"comment"`
+	CustomerName    string      `json:"customer_name"`
+	Archived        bool        `json:"archived"`
+	OriginalCountry string      `json:"original_country"`
+	ItemTimeLength  int         `json:"itemTimeLength"`
+	StayTimeLength  int         `json:"stayTimeLength"`
+	OriginInfo      CarrierInfo `json:"origin_info"`
+	DestinationInfo CarrierInfo `json:"destination_info"`
+	ServiceCode     string      `json:"service_code"`
+	LastEvent       string      `json:"lastEvent"`
+	LastUpdateTime  string      `json:"lastUpdateTime"`
+}
+type CarrierInfo struct {
+	ItemReceived       string      `json:"ItemReceived"`
+	ItemDispatched     string      `json:"ItemDispatched"`
+	DepartfromAirport  string      `json:"DepartfromAirport"`
+	ArrivalfromAbroad  string      `json:"ArrivalfromAbroad"`
+	CustomsClearance   string      `json:"CustomsClearance"`
+	DestinationArrived string      `json:"DestinationArrived"`
 	Weblink            string      `json:"weblink"`
 	Phone              string      `json:"phone"`
 	CarrierCode        string      `json:"carrier_code"`
@@ -68,10 +83,32 @@ type OriginInfo struct {
 }
 
 type TrackInfo struct {
-	Date              time.Time `json:"Date"`
-	StatusDescription string    `json:"StatusDescription"`
-	Details           string    `json:"Details"`
-	CheckpointStatus  string    `json:"checkpoint_status"`
+	Date              string `json:"Date"`
+	StatusDescription string `json:"StatusDescription"`
+	Details           string `json:"Details"`
+	CheckpointStatus  string `json:"checkpoint_status"`
+}
+
+func (t TrackingData) ShortInfo() string {
+	var title string
+	if t.Title != "" {
+		title = t.Title
+	} else {
+		title = "A parcel"
+	}
+	return fmt.Sprintf("[%s]\t@ %s - %s from %s (%s)", t.Status, t.UpdatedAt, title, t.CarrierCode, t.TrackingNumber)
+}
+
+func (t TrackingData) Info() string {
+	info := t.ShortInfo() + "\n"
+	for _, trackInfo := range append(t.OriginInfo.TrackInfo, t.DestinationInfo.TrackInfo...) {
+		info += trackInfo.Info() + "\n"
+	}
+	return info
+}
+
+func (t TrackInfo) Info() string {
+	return fmt.Sprintf("\t[%s] @ %s \n\t%s", t.CheckpointStatus, t.Date, t.StatusDescription)
 }
 
 //--------------FUNCTIONS-------------------
@@ -86,4 +123,16 @@ func CreateTracking(tracking TrackingCreation) TrackingResponse {
 	}
 
 	return trackingResponse
+}
+
+func GetTrackings() []TrackingData {
+	url := config.BasePath + "/trackings/get"
+	trackingResponse := TrackingItems{}
+
+	err := DoRequest("GET", url, nil, &trackingResponse)
+	if err != nil {
+		panic(err)
+	}
+
+	return trackingResponse.Data.Items
 }
