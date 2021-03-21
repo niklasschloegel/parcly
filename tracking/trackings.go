@@ -24,15 +24,6 @@ type TrackingCreation struct {
 }
 
 //------------Tracking Response------------
-type TrackingResponse struct {
-	Meta struct {
-		Code    int    `json:"code"`
-		Type    string `json:"type"`
-		Message string `json:"message"`
-	} `json:"meta"`
-	Data TrackingData `json:"data"`
-}
-
 type TrackingItems struct {
 	Meta struct {
 		Code    int    `json:"code"`
@@ -40,9 +31,6 @@ type TrackingItems struct {
 		Message string `json:"message"`
 	} `json:"meta"`
 	Data struct {
-		Page  int            `json:"page"`
-		Limit int            `json:"limit"`
-		Total string         `json:"total"`
 		Items []TrackingData `json:"items"`
 	} `json:"data"`
 }
@@ -100,7 +88,7 @@ func (t TrackingData) ShortInfo() string {
 }
 
 func (t TrackingData) Info() string {
-	info := t.ShortInfo() + "\n"
+	info := t.ShortInfo() + "\n\tHistory:\n"
 	for _, trackInfo := range append(t.OriginInfo.TrackInfo, t.DestinationInfo.TrackInfo...) {
 		info += trackInfo.Info() + "\n"
 	}
@@ -108,21 +96,21 @@ func (t TrackingData) Info() string {
 }
 
 func (t TrackInfo) Info() string {
-	return fmt.Sprintf("\t[%s] @ %s \n\t%s", t.CheckpointStatus, t.Date, t.StatusDescription)
+	return fmt.Sprintf("\t[%s] @ %s\n\t- %s", t.CheckpointStatus, t.Date, t.StatusDescription)
 }
 
 //--------------FUNCTIONS-------------------
 
-func CreateTracking(tracking TrackingCreation) TrackingResponse {
+func CreateTracking(tracking TrackingCreation) TrackingData {
 	url := config.BasePath + "/trackings/realtime"
-	trackingResponse := TrackingResponse{}
+	trackingResponse := TrackingItems{}
 
 	err := DoRequest("POST", url, tracking, &trackingResponse)
 	if err != nil {
 		panic(err)
 	}
 
-	return trackingResponse
+	return trackingResponse.Data.Items[0]
 }
 
 func GetTrackings() []TrackingData {

@@ -35,6 +35,8 @@ var carriersListCmd = &cobra.Command{
 	},
 }
 
+var trackingDetail bool
+
 var trackingListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all trackings",
@@ -43,7 +45,11 @@ var trackingListCmd = &cobra.Command{
 		allTrackings := tracking.GetTrackings()
 		if len(allTrackings) > 0 {
 			for _, t := range allTrackings {
-				fmt.Println(t.ShortInfo())
+				if trackingDetail {
+					fmt.Println(t.Info())
+				} else {
+					fmt.Println(t.ShortInfo())
+				}
 			}
 		} else {
 			fmt.Println("No parcels tracked.")
@@ -55,13 +61,6 @@ func init() {
 	carriersCmd.AddCommand(carriersListCmd)
 	trackingCmd.AddCommand(trackingListCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	trackingListCmd.PersistentFlags().BoolVarP(&trackingDetail, "detail", "d", false,
+		"Specifies if previous tracking status should get shown.")
 }
