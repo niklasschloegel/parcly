@@ -31,9 +31,13 @@ var detectCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 1 {
 			detectedCarriers := tracking.Detect(args[0])
-			fmt.Println("Following carriers are a possible match:")
-			for _, c := range detectedCarriers {
-				fmt.Println(c.Info())
+			if len(detectedCarriers) > 0 {
+				fmt.Println("Following carriers are a possible match:")
+				for _, c := range detectedCarriers {
+					fmt.Println(c.Info())
+				}
+			} else {
+				fmt.Println("No matching carrier found for tracking number:", args[0])
 			}
 		} else {
 			log.Fatal("No or too many tracking number(s) provided")
