@@ -1,7 +1,9 @@
 package tracking
 
 import (
+	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/niklasschloegel/parcly/config"
 )
@@ -109,6 +111,50 @@ func (t TrackingData) Info() string {
 
 func (t TrackInfo) Info() string {
 	return fmt.Sprintf("\t[%s] @ %s\n\t- %s", t.CheckpointStatus, t.Date, t.StatusDescription)
+}
+
+func FilterStatus(pattern string, trackings []TrackingData) ([]TrackingData, error) {
+	filteredTrackings := []TrackingData{}
+
+	var possibleStatuses sort.StringSlice = config.TrackingStatuses
+	possibleStatuses.Sort()
+	index := possibleStatuses.Search(pattern)
+	if possibleStatuses[index] != pattern {
+		errorMessage := fmt.Sprintf("No status '%s' found", pattern)
+		return filteredTrackings, errors.New(errorMessage)
+	}
+
+	for _, t := range trackings {
+		if t.Status == pattern {
+			filteredTrackings = append(filteredTrackings, t)
+		}
+	}
+	return filteredTrackings, nil
+}
+
+func FilterCarrier(pattern string, trackings []TrackingData) ([]TrackingData, error) {
+	filteredTrackings := []TrackingData{}
+
+	possibleCarriers := GetCarriers()
+	var carrierCodes sort.StringSlice = []string{}
+	for _, c := range possibleCarriers {
+		carrierCodes = append(carrierCodes, c.Code)
+	}
+	carrierCodes.Sort()
+	index := carrierCodes.Search(pattern)
+	if carrierCodes[index] != pattern {
+		errorMessage := fmt.Sprintf("No carrier found with code '%s'", pattern)
+		return filteredTrackings, errors.New(errorMessage)
+	}
+
+	for _, t := range trackings {
+		if t.CarrierCode == pattern {
+			filteredTrackings = append(filteredTrackings, t)
+		}
+	}
+
+	return filteredTrackings, nil
+
 }
 
 //--------------FUNCTIONS-------------------

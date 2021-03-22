@@ -37,6 +37,8 @@ var carriersListCmd = &cobra.Command{
 }
 
 var trackingDetail bool
+var statusFilter string
+var carrierFilter string
 
 var trackingListCmd = &cobra.Command{
 	Use:     "list",
@@ -46,7 +48,8 @@ var trackingListCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		allTrackings := tracking.GetTrackings()
 		if len(allTrackings) > 0 {
-			for _, t := range allTrackings {
+			filteredTrackings := filter(allTrackings)
+			for _, t := range filteredTrackings {
 				if trackingDetail {
 					fmt.Println(t.Info())
 				} else {
@@ -65,4 +68,30 @@ func init() {
 
 	trackingListCmd.PersistentFlags().BoolVarP(&trackingDetail, "detail", "d", false,
 		"Specifies if previous tracking status should get shown.")
+	trackingListCmd.PersistentFlags().StringVarP(&statusFilter, "status", "s", "",
+		"Filters output for given status.")
+	trackingListCmd.PersistentFlags().StringVarP(&carrierFilter, "carrier", "c", "",
+		"Filters output for given carrier code")
+}
+
+func filter(trackingData []tracking.TrackingData) []tracking.TrackingData {
+	if statusFilter != "" || carrierFilter != "" {
+		filteredData := []tracking.TrackingData{}
+		var err error
+		filteredData = append(filteredData, trackingData...)
+		if statusFilter != "" {
+			filteredData, err = tracking.FilterStatus(statusFilter, filteredData)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+		}
+		if carrierFilter != "" {
+			filteredData, err = tracking.FilterCarrier(carrierFilter, filteredData)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+		}
+		return filteredData
+	}
+	return trackingData
 }
