@@ -22,13 +22,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var carrier string
+var editCarrierCode, editTitle string
 
-var removeCmd = &cobra.Command{
-	Use:     "remove <trackingNr>",
-	Short:   "Removes tracking",
-	Long:    `Removes tracking item from specified tracking nr`,
-	Aliases: []string{"rm"},
+var editCmd = &cobra.Command{
+	Use:   "edit <trackingNr>",
+	Short: "Edits tracking item",
+	Long:  `Edits tracking item with specified tracking number`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 1 {
 			trackingNr := args[0]
@@ -45,8 +44,18 @@ var removeCmd = &cobra.Command{
 					return
 				}
 			}
-			tracking.DeleteTracking(carrier, trackingNr)
-			fmt.Println("Successfully deleted tracking item.")
+			updateRequest := tracking.UpdateTracking{}
+			if editTitle != "" {
+				updateRequest.Title = editTitle
+			}
+
+			if updateRequest != (tracking.UpdateTracking{}) {
+				// if struct not empty
+				tracking.EditTrackings(carrier, trackingNr, updateRequest)
+				fmt.Println("Successfully edited tracking item.")
+			} else {
+				fmt.Println("Nothing to change.")
+			}
 		} else {
 			fmt.Println("No or too many tracking numbers provided.")
 		}
@@ -54,6 +63,7 @@ var removeCmd = &cobra.Command{
 }
 
 func init() {
-	trackingCmd.AddCommand(removeCmd)
-	removeCmd.PersistentFlags().StringVarP(&carrier, "carrier", "c", "", "Defines carrier of parcel")
+	trackingCmd.AddCommand(editCmd)
+	editCmd.PersistentFlags().StringVarP(&editCarrierCode, "carrier", "c", "", "Defines carrier of parcel to edit")
+	editCmd.PersistentFlags().StringVarP(&editTitle, "title", "t", "", "Sets new title")
 }

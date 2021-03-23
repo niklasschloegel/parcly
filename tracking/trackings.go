@@ -27,14 +27,16 @@ type TrackingCreation struct {
 
 //------------Tracking Response------------
 type TrackingItems struct {
-	Meta struct {
-		Code    int    `json:"code"`
-		Type    string `json:"type"`
-		Message string `json:"message"`
-	} `json:"meta"`
+	Meta Meta `json:"meta"`
 	Data struct {
 		Items []TrackingData `json:"items"`
 	} `json:"data"`
+}
+
+type Meta struct {
+	Code    int    `json:"code"`
+	Type    string `json:"type"`
+	Message string `json:"message"`
 }
 
 type TrackingData struct {
@@ -79,19 +81,10 @@ type TrackInfo struct {
 	CheckpointStatus  string `json:"checkpoint_status"`
 }
 
-type DeletionResponse struct {
-	Meta struct {
-		Code    int    `json:"code"`
-		Type    string `json:"type"`
-		Message string `json:"message"`
-	} `json:"meta"`
-	Data []interface{} `json:"data"`
-}
-
 func (t TrackingData) ShortInfo() string {
 	var title string
-	if t.Comment != "" {
-		title = t.Comment
+	if t.Title != "" {
+		title = t.Title
 	} else {
 		title = "A parcel"
 	}
@@ -111,6 +104,82 @@ func (t TrackingData) Info() string {
 
 func (t TrackInfo) Info() string {
 	return fmt.Sprintf("\t[%s] @ %s\n\t- %s", t.CheckpointStatus, t.Date, t.StatusDescription)
+}
+
+//------------Tracking Deletion-------------
+type DeletionResponse struct {
+	Meta Meta          `json:"meta"`
+	Data []interface{} `json:"data"`
+}
+
+//------------Tracking Update-------------
+type UpdateTracking struct {
+	Title            string `json:"title,omitempty"`
+	LogisticsChannel string `json:"logistics_channel,omitempty"`
+	CustomerName     string `json:"customer_name,omitempty"`
+	CustomerEmail    string `json:"customer_email,omitempty"`
+	CustomerPhone    string `json:"customer_phone,omitempty"`
+	OrderId          string `json:"order_id,omitempty"`
+	DestinationCode  string `json:"destination_code,omitempty"`
+	Archived         string `json:"archived,omitempty"`
+	Status           int    `json:"status,omitempty"`
+}
+
+type UpdateResponse struct {
+	Meta Meta         `json:"meta"`
+	Data TrackingData `json:"data"`
+}
+
+//--------------FUNCTIONS-------------------
+
+func CreateTracking(tracking TrackingCreation) TrackingData {
+	url := config.BasePath + "/trackings/realtime"
+	trackingResponse := TrackingItems{}
+
+	err := DoRequest("POST", url, tracking, &trackingResponse)
+	if err != nil {
+		panic(err)
+	}
+
+	if tracking.Comment != "" {
+		// straight Update, because title cannot be set on first request
+		updateTracking := UpdateTracking{Title: tracking.Comment}
+		EditTrackings(tracking.CarrierCode, tracking.TrackingNumber, updateTracking)
+	}
+
+	return trackingResponse.Data.Items[0]
+}
+
+func GetTrackings() []TrackingData {
+	url := config.BasePath + "/trackings/get"
+	trackingResponse := TrackingItems{}
+
+	err := DoRequest("GET", url, nil, &trackingResponse)
+	if err != nil {
+		panic(err)
+	}
+
+	return trackingResponse.Data.Items
+}
+
+func EditTrackings(carrierCode, trackingNumber string, update UpdateTracking) {
+	url := fmt.Sprintf("%s/trackings/%s/%s", config.BasePath, carrierCode, trackingNumber)
+	updateResponse := UpdateResponse{}
+
+	err := DoRequest("PUT", url, update, &updateResponse)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func DeleteTracking(carrierCode, trackingNumber string) {
+	url := fmt.Sprintf("%s/trackings/%s/%s", config.BasePath, carrierCode, trackingNumber)
+	deletionResponse := DeletionResponse{}
+
+	err := DoRequest("DELETE", url, nil, &deletionResponse)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func FilterStatus(pattern string, trackings []TrackingData) ([]TrackingData, error) {
@@ -155,40 +224,4 @@ func FilterCarrier(pattern string, trackings []TrackingData) ([]TrackingData, er
 
 	return filteredTrackings, nil
 
-}
-
-//--------------FUNCTIONS-------------------
-
-func CreateTracking(tracking TrackingCreation) TrackingData {
-	url := config.BasePath + "/trackings/realtime"
-	trackingResponse := TrackingItems{}
-
-	err := DoRequest("POST", url, tracking, &trackingResponse)
-	if err != nil {
-		panic(err)
-	}
-
-	return trackingResponse.Data.Items[0]
-}
-
-func GetTrackings() []TrackingData {
-	url := config.BasePath + "/trackings/get"
-	trackingResponse := TrackingItems{}
-
-	err := DoRequest("GET", url, nil, &trackingResponse)
-	if err != nil {
-		panic(err)
-	}
-
-	return trackingResponse.Data.Items
-}
-
-func DeleteTracking(carrierCode, trackingNumber string) {
-	url := fmt.Sprintf("%s/trackings/%s/%s", config.BasePath, carrierCode, trackingNumber)
-	deletionResponse := DeletionResponse{}
-
-	err := DoRequest("DELETE", url, nil, &deletionResponse)
-	if err != nil {
-		panic(err)
-	}
 }
