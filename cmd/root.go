@@ -16,6 +16,9 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/niklasschloegel/parcly/config"
 	"github.com/spf13/cobra"
 
@@ -29,6 +32,33 @@ var rootCmd = &cobra.Command{
 	Use:   "parcly",
 	Short: "Simply tracks parcels",
 	Long:  `Parcly is a tool for tracking parcels.`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		if config.TracktryApiKey == "" {
+			errorMsg := `API Key is missing.
+You need to provide an API Key from Tracktry.
+Sign up at https://www.tracktry.com/signup-en.html,
+and copy the API key under 'Settings'.
+
+The API Key can be provided in three ways:
+
+1) As a flag:
+	parcly <noun> <command> --tracktrykey <key>
+
+2) As an environment variable:
+	export PARCLY_TRACKTRYKEY=<key>
+
+3) In a config file:
+	default config file is $HOME/.parcly.yaml and should contain:
+	tracktrykey: <key>
+
+	When you want to use another location, you can
+	specify the location with another flag:
+	parcly ... --config <filepath>
+			`
+			return errors.New(errorMsg)
+		}
+		return nil
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -40,16 +70,8 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.parcly.yaml)")
 	rootCmd.PersistentFlags().StringVar(&config.TracktryApiKey, "tracktrykey", "", "Tracktry API Key")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -73,6 +95,7 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
+		fmt.Println("Reading env file")
 		config.TracktryApiKey = viper.GetString("tracktrykey")
 	}
 }
