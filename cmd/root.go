@@ -53,6 +53,11 @@ The API Key can be provided in three ways:
 	When you want to use another location, you can
 	specify the location with another flag:
 	parcly ... --config <filepath>
+
+4) Through the config set command:
+	parcly config set --tracktry key
+	For more information see
+	parcly help config set
 			`
 			return errors.New(errorMsg)
 		}
@@ -70,7 +75,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.parcly.yaml)")
-	rootCmd.PersistentFlags().StringVarP(&config.TracktryApiKey, config.TrackTryConfigKey, "t", "", "Tracktry API Key")
+	rootCmd.PersistentFlags().StringVar(&config.TracktryApiKey, config.TrackTryConfigKey, "", "Tracktry API Key")
 }
 
 // initConfig reads in config file and ENV variables if set.
