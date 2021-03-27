@@ -13,13 +13,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package config
+package cmd
 
-const (
-	BasePath          = "https://api.tracktry.com/v1"
-	TrackTryConfigKey = "tracktrykey"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var TrackingStatuses = []string{"pending", "notfound", "transit", "pickup",
-	"delivered", "undelivered", "exception", "expired"}
-var TracktryApiKey string
+var configCmd = &cobra.Command{
+	Use:   "config",
+	Short: "Information about config",
+	Long: `Lists all available configuration variables for parcly
+found in a config file or via environment variables.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		for key, val := range viper.AllSettings() {
+			fmt.Printf("%s=%s\n", key, val)
+		}
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(configCmd)
+}

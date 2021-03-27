@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/niklasschloegel/parcly/config"
 	"github.com/spf13/cobra"
@@ -71,7 +70,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.parcly.yaml)")
-	rootCmd.PersistentFlags().StringVar(&config.TracktryApiKey, "tracktrykey", "", "Tracktry API Key")
+	rootCmd.PersistentFlags().StringVarP(&config.TracktryApiKey, config.TrackTryConfigKey, "t", "", "Tracktry API Key")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -91,11 +90,10 @@ func initConfig() {
 
 	viper.SetEnvPrefix("parcly")
 	viper.AutomaticEnv() // read in environment variables that match
-	config.TracktryApiKey = viper.GetString("tracktrykey")
+	config.TracktryApiKey = viper.GetString(config.TrackTryConfigKey)
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Reading env file")
-		config.TracktryApiKey = viper.GetString("tracktrykey")
+		config.TracktryApiKey = viper.GetString(config.TrackTryConfigKey)
 	}
 }
