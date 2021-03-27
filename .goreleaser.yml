@@ -53,3 +53,12 @@ brews:
     folder: Formula
     homepage: https://github.com/niklasschloegel/parcly
     description: Parcly is a CLI app for tracking parcels.
+nfpms:
+  - id: packages
+    file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+publishers:
+  - name: fury.io
+    ids:
+      - packages
+    dir: "{{ dir .ArtifactPath }}"
+    cmd: curl -F package=@{{ .ArtifactName }} https://{{ .Env.FURY_TOKEN }}@push.fury.io/netdevops/
