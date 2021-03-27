@@ -46,3 +46,10 @@ changelog:
       - 'README'
       - Merge pull request
       - Merge branch
+brews:
+  - github:
+      owner: niklasschloegel
+      name: parcly
+    folder: Formula
+    homepage: https://github.com/niklasschloegel/parcly
+    description: Parcly is a CLI app for tracking parcels.
