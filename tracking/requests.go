@@ -18,6 +18,7 @@ package tracking
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -55,7 +56,8 @@ func DoRequest(method, url string, requestStruct, responseStruct interface{}) er
 	}
 
 	if resp.StatusCode != 200 {
-		fmt.Println(resp.Status, resp.StatusCode)
+		errorMsg := fmt.Sprintf("Error: %s", resp.Status)
+		return errors.New(errorMsg)
 	}
 
 	responseBytes, err := ioutil.ReadAll(resp.Body)
@@ -64,7 +66,11 @@ func DoRequest(method, url string, requestStruct, responseStruct interface{}) er
 	}
 
 	if err := json.Unmarshal(responseBytes, &responseStruct); err != nil {
-		return err
+		anyResp := AnyResponse{}
+		if err := json.Unmarshal(responseBytes, &anyResp); err != nil {
+			return err
+		}
+		return errors.New(anyResp.Meta.Message)
 	}
 
 	return nil

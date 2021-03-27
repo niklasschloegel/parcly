@@ -18,12 +18,18 @@ package tracking
 import (
 	"errors"
 	"fmt"
+	"os"
 	"sort"
 
 	"github.com/niklasschloegel/parcly/config"
 )
 
 //----------------STRUCTS-------------------
+type AnyResponse struct {
+	Meta Meta        `json:"meta"`
+	Data interface{} `json:"data"`
+}
+
 //------------Tracking Creation-------------
 type TrackingCreation struct {
 	TrackingNumber           string `json:"tracking_number"`
@@ -153,7 +159,9 @@ func CreateTracking(tracking TrackingCreation) TrackingData {
 
 	err := DoRequest("POST", url, tracking, &trackingResponse)
 	if err != nil {
-		panic(err)
+		errOut := fmt.Errorf("error: %v", err)
+		fmt.Println(errOut.Error())
+		os.Exit(-1)
 	}
 
 	if tracking.Comment != "" {
@@ -171,7 +179,9 @@ func GetTrackings() []TrackingData {
 
 	err := DoRequest("GET", url, nil, &trackingResponse)
 	if err != nil {
-		panic(err)
+		errOut := fmt.Errorf("error: %v", err)
+		fmt.Println(errOut.Error())
+		os.Exit(-1)
 	}
 
 	return trackingResponse.Data.Items
@@ -183,7 +193,9 @@ func EditTrackings(carrierCode, trackingNumber string, update UpdateTracking) {
 
 	err := DoRequest("PUT", url, update, &updateResponse)
 	if err != nil {
-		panic(err)
+		errOut := fmt.Errorf("error: %v", err)
+		fmt.Println(errOut.Error())
+		os.Exit(-1)
 	}
 }
 
@@ -193,7 +205,9 @@ func DeleteTracking(carrierCode, trackingNumber string) {
 
 	err := DoRequest("DELETE", url, nil, &deletionResponse)
 	if err != nil {
-		panic(err)
+		errOut := fmt.Errorf("error: %v", err)
+		fmt.Println(errOut.Error())
+		os.Exit(-1)
 	}
 }
 
