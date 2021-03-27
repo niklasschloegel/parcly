@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
+Copyright © 2021 Niklas Schlögel <niklasschloegel@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@ import (
 
 var setApiKey string
 
-// setCmd represents the set command
+// Sets a configuration variable and saves it to config file.
+// Config file location is specified in root.go/initConfig
 var setCmd = &cobra.Command{
 	Use:   "set [-key=value | -key value]*",
 	Short: "Sets a config variable",

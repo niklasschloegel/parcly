@@ -24,6 +24,7 @@ import (
 
 var editCarrierCode, editTitle string
 
+// Edits an existiing tracking item.
 var editCmd = &cobra.Command{
 	Use:   "edit <trackingNr>",
 	Short: "Edits tracking item",

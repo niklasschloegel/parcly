@@ -102,6 +102,7 @@ type TrackInfo struct {
 	CheckpointStatus  string `json:"checkpoint_status"`
 }
 
+// Returns short information about TrackingData
 func (t TrackingData) ShortInfo() string {
 	var title string
 	if t.Title != "" {
@@ -115,6 +116,7 @@ func (t TrackingData) ShortInfo() string {
 	return fmt.Sprintf("[%s]\t@ %s - %s from %s (%s)", t.Status, t.UpdatedAt, title, t.CarrierCode, t.TrackingNumber)
 }
 
+// Returns detailed information about TrackingData
 func (t TrackingData) Info() string {
 	info := t.ShortInfo() + "\n\tHistory:\n"
 	for _, trackInfo := range append(t.OriginInfo.TrackInfo, t.DestinationInfo.TrackInfo...) {
@@ -123,6 +125,7 @@ func (t TrackingData) Info() string {
 	return info
 }
 
+// Returns formatted information about TrackInfo
 func (t TrackInfo) Info() string {
 	return fmt.Sprintf("\t[%s] @ %s\n\t- %s", t.CheckpointStatus, t.Date, t.StatusDescription)
 }
@@ -153,6 +156,7 @@ type UpdateResponse struct {
 
 //--------------FUNCTIONS-------------------
 
+// Creates a tracking item and returns requested TrackingData
 func CreateTracking(tracking TrackingCreation) TrackingData {
 	url := config.BasePath + "/trackings/realtime"
 	trackingResponse := TrackingItems{}
@@ -173,6 +177,7 @@ func CreateTracking(tracking TrackingCreation) TrackingData {
 	return trackingResponse.Data.Items[0]
 }
 
+// Requests all created tracking items.
 func GetTrackings() []TrackingData {
 	url := config.BasePath + "/trackings/get"
 	trackingResponse := TrackingItems{}
@@ -187,6 +192,8 @@ func GetTrackings() []TrackingData {
 	return trackingResponse.Data.Items
 }
 
+// Edits a tracking item with specified carrier code and tracking number
+// to changes included in an UpdateTracking struct.
 func EditTrackings(carrierCode, trackingNumber string, update UpdateTracking) {
 	url := fmt.Sprintf("%s/trackings/%s/%s", config.BasePath, carrierCode, trackingNumber)
 	updateResponse := UpdateResponse{}
@@ -199,6 +206,7 @@ func EditTrackings(carrierCode, trackingNumber string, update UpdateTracking) {
 	}
 }
 
+// Deletes a tracking item with specified carrier code and tracking number.
 func DeleteTracking(carrierCode, trackingNumber string) {
 	url := fmt.Sprintf("%s/trackings/%s/%s", config.BasePath, carrierCode, trackingNumber)
 	deletionResponse := DeletionResponse{}
@@ -211,6 +219,7 @@ func DeleteTracking(carrierCode, trackingNumber string) {
 	}
 }
 
+// Filters a slice of TrackingData matching given status.
 func FilterStatus(pattern string, trackings []TrackingData) ([]TrackingData, error) {
 	filteredTrackings := []TrackingData{}
 
@@ -230,6 +239,7 @@ func FilterStatus(pattern string, trackings []TrackingData) ([]TrackingData, err
 	return filteredTrackings, nil
 }
 
+// Filters a slice of TrackingData matching given carrier.
 func FilterCarrier(pattern string, trackings []TrackingData) ([]TrackingData, error) {
 	filteredTrackings := []TrackingData{}
 

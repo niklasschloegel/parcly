@@ -26,6 +26,10 @@ import (
 	"github.com/niklasschloegel/parcly/config"
 )
 
+// Handles requests.
+// If a body is specified through the responseStruct parameter,
+// this method tries to marshal this struct into a json string.
+// Responses are getting unmarshalled from a json string to a struct.
 func DoRequest(method, url string, requestStruct, responseStruct interface{}) error {
 
 	var request *http.Request

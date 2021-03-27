@@ -17,6 +17,7 @@ package tracking
 
 import (
 	"fmt"
+	"os"
 	"sort"
 
 	"github.com/niklasschloegel/parcly/config"
@@ -38,6 +39,7 @@ type Carrier struct {
 	Picture  string `json:"picture"`
 }
 
+// Returns formatted information from carrier.
 func (c Carrier) Info() string {
 	return nameCodeFormat(c.Name, c.Code)
 }
@@ -59,17 +61,21 @@ type DetectionRequest struct {
 	TrackingNumber string `json:"tracking_number"`
 }
 
+// Returns formatted Information about detected Carrier
 func (c DetectionData) Info() string {
 	return nameCodeFormat(c.Name, c.Code)
 }
 
+// Requests all carriers
 func GetCarriers() []Carrier {
 	url := config.BasePath + "/carriers"
 	carrierResponse := CarrierResponse{}
 
 	err := DoRequest("GET", url, nil, &carrierResponse)
 	if err != nil {
-		panic(err)
+		errOut := fmt.Errorf("error: %v", err)
+		fmt.Println(errOut.Error())
+		os.Exit(-1)
 	}
 
 	carriers := carrierResponse.Carriers
@@ -81,6 +87,7 @@ func GetCarriers() []Carrier {
 	return carriers
 }
 
+// Tries to detect a carrier from specified tracking number.
 func Detect(trackingNr string) []DetectionData {
 	url := config.BasePath + "/carriers/detect"
 	carrierDetection := CarrierDetection{}
@@ -88,7 +95,9 @@ func Detect(trackingNr string) []DetectionData {
 
 	err := DoRequest("POST", url, requestBody, &carrierDetection)
 	if err != nil {
-		panic(err)
+		errOut := fmt.Errorf("error: %v", err)
+		fmt.Println(errOut.Error())
+		os.Exit(-1)
 	}
 	return carrierDetection.Data
 }

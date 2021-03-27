@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Config command prints all available configuration variables.
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Information about config",

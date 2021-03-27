@@ -19,6 +19,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Carrier noun which does not provide own functionality.
 var carriersCmd = &cobra.Command{
 	Use:   "carriers",
 	Short: "Get informations about carriers",

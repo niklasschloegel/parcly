@@ -25,6 +25,8 @@ import (
 
 var carrierCode, shipDate, postalCode, specNumberDest, orderID, title string
 
+// Adds a tracking item to Tracktry.
+// Prints short tracking information after successful creatin.
 var addCmd = &cobra.Command{
 	Use:   "add <trackingNr>",
 	Short: "Tracks a parcel",

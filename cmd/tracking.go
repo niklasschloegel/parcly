@@ -19,7 +19,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// trackingCmd represents the tracking command
+// Command for managing trackings.
+// Has no own functionality when called.
 var trackingCmd = &cobra.Command{
 	Use:   "tracking",
 	Short: "Managing tracking",
@@ -28,14 +29,4 @@ var trackingCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(trackingCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// trackingCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// trackingCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

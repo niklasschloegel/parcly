@@ -24,6 +24,7 @@ import (
 
 var carrier string
 
+// Deletes a tracking item from Tracktry servers
 var removeCmd = &cobra.Command{
 	Use:     "remove <trackingNr>",
 	Short:   "Removes tracking",

@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Lists all available carriers through Tracktry API
 var carriersListCmd = &cobra.Command{
 	Use:     "list",
 	Short:   "Lists available carriers",
