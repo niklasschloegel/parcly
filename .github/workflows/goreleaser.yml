@@ -1,4 +1,4 @@
-- name: goreleaser
+- name: GoReleaser Action
   uses: goreleaser/goreleaser-action@v2.4.1
 ---
 name: Release
