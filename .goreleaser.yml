@@ -48,19 +48,20 @@ changelog:
       - Merge pull request
       - Merge branch
 brews:
-  tap:
-    owner: niklasschloegel
-    name: homebrew-parcly
-  url_template: "https://github.com/niklasschloegel/parcly/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-  commit_author:
-    name: niklasschloegel
-    email: niklasschloegel@gmail.com
-  folder: Formula
-  description: Parcly is a CLI app for tracking parcels.
-  license: "Apache-2.0"
-  dependencies:
-    - name: git
-    - name: go
+  - 
+    tap:
+      owner: niklasschloegel
+      name: homebrew-parcly
+    url_template: "https://github.com/niklasschloegel/parcly/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    commit_author:
+      name: niklasschloegel
+      email: niklasschloegel@gmail.com
+    folder: Formula
+    description: Parcly is a CLI app for tracking parcels.
+    license: "Apache-2.0"
+    dependencies:
+      - name: git
+      - name: go
 nfpms:
   - id: packages
     file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
