@@ -6,26 +6,24 @@ This app is built with [cobra](https://github.com/spf13/cobra) and [Tracktry API
 
 ## Getting started
 
-To use this app, you need to create a free account at tracktry.com.
-
 ### Installation
 
-#### From source
-
-* In your GOPATH create the following directory structure
+#### macOS Homebrew
 
 ```bash
-src/github.com/niklasschloegel
+brew tap niklasschloegel/parcly; brew install niklasschloegel/parcly/parcly
 ```
 
-* cd into the directory above and clone this repo
-* cd into the directory 'parcly' and type
+#### With go install
 
 ```bash
-go install
+go install github.com/niklasschloegel/parcly@latest
 ```
 
 ### Setting the API key
+
+To use this app, you need to create a free account at tracktry.com.
+Your API key can be found under Settings/API.
 
 The API Key can be provided in three ways:
 
@@ -38,7 +36,7 @@ parcly <noun> <command> --tracktrykey <key>
 2. As an environment variable:
 
 ```bash
-export PARCLY_TRACKTRYKEY=\<key\>
+export PARCLY_TRACKTRYKEY=<key>
 ```
 
 3. In a config file:
@@ -46,14 +44,14 @@ export PARCLY_TRACKTRYKEY=\<key\>
 default config file is $HOME/.parcly.yaml and should contain:
 
 ```yaml
-tracktrykey: \<key\>
+tracktrykey: <key>
 ```
 
 When you want to use another location, you can
 specify the location with another flag:
 
 ```bash
-parcly ... --config \<filepath\>
+parcly ... --config <filepath>
 ```
 
 4. Through the config set command:
