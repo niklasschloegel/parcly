@@ -22,7 +22,7 @@ go install github.com/niklasschloegel/parcly@latest
 
 ### Setting the API key
 
-To use this app, you need to create a free account at tracktry.com.
+To use this app, you need to create a free account at [Tracktry](https://www.tracktry.com).
 Your API key can be found under Settings/API.
 
 The API Key can be provided in three ways:
