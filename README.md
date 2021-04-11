@@ -24,7 +24,7 @@ Go installation required
 go install github.com/niklasschloegel/parcly@latest
 ```
 
-#### Debian / apt(-get)
+#### With apt (for Debian based Linux distros)
 
 First you need to add the following line to the file **/etc/apt/sources.list.d/fury.list**:
 
@@ -36,6 +36,24 @@ And then install with
 
 ```bash
 sudo apt update; sudo apt install parcly
+```
+
+#### With yum (for Fedora/CentOS)
+
+Add the following entry to this file **/etc/yum.repos.d/fury.repo**:
+
+```text
+[fury]
+name=Gemfury Private Repo
+baseurl=https://yum.fury.io/niklasschloegel/
+enabled=1
+gpgcheck=0
+```
+
+And then install with
+
+```bash
+sudo yum update; sudo yum install parcly
 ```
 
 ### Setting the API key
