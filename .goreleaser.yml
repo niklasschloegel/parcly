@@ -67,7 +67,6 @@ nfpms:
     file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     license: Apache 2.0
     formats:
-      - apk
       - deb
       - rpm
     dependencies:
