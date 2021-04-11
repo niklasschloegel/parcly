@@ -18,8 +18,24 @@ brew tap niklasschloegel/parcly; brew install niklasschloegel/parcly/parcly
 
 #### With go install
 
+Go installation required
+
 ```bash
 go install github.com/niklasschloegel/parcly@latest
+```
+
+#### Debian / apt(-get)
+
+First you need to add the following line to the file **/etc/apt/sources.list.d/fury.list**:
+
+```text
+deb [trusted=yes] https://apt.fury.io/niklasschloegel/ /
+ ```
+
+And then install with
+
+```bash
+sudo apt update; sudo apt install parcly
 ```
 
 ### Setting the API key
