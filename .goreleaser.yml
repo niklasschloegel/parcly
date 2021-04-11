@@ -23,13 +23,18 @@ builds:
       - amd64
     goarm:
       - 6
-      - 7
+      - 7 
+    ignore:
+      - goos: darwin
+        goarch: arm
+      - goos: windows
+        goarch: arm
 archives:
   - format: tar.gz
     format_overrides:
       - goos: windows
         format: zip
-    name_template: '{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}'
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}'
     replacements:
       amd64: 64bit
       386: 32bit
@@ -74,12 +79,13 @@ nfpms:
     file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     license: Apache 2.0
     description: Parcly is a CLI app for tracking parcels.
+    maintainer: Niklas Schlögel <niklasschloegel@gmail.com>
     formats:
       - deb
       - rpm
     dependencies:
       - git
-      - go
+      - golang
 publishers:
   - name: fury.io
     ids:
