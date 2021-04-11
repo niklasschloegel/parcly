@@ -66,6 +66,7 @@ nfpms:
   - id: packages
     file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     license: Apache 2.0
+    description: Parcly is a CLI app for tracking parcels.
     formats:
       - deb
       - rpm
