@@ -25,14 +25,7 @@ builds:
       - 6
       - 7
 archives:
-  - format: tar.gz
-    format_overrides:
-      - goos: windows
-        format: zip
-    name_template: '{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}'
-    files:
-      - README.md
-      - LICENSE
+  - format: binary
 checksum:
   name_template: 'checksums.txt'
 snapshot:
