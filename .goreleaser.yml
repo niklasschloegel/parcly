@@ -76,7 +76,7 @@ brews:
       - name: go
 nfpms:
   - id: packages
-    file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    file_name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}'
     license: Apache 2.0
     description: Parcly is a CLI app for tracking parcels.
     maintainer: Niklas Schlögel <niklasschloegel@gmail.com>
