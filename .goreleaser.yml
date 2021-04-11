@@ -17,15 +17,23 @@ builds:
       - linux
       - windows
       - darwin
-    goarch:
-      - arm
-      - arm64
-      - amd64
-    goarm:
-      - 6
-      - 7
 archives:
-  - format: binary
+  - format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: '{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}'
+    replacements:
+      amd64: 64bit
+      386: 32bit
+      arm: ARM
+      arm64: ARM64
+      darwin: macOS
+      linux: Linux
+      windows: Windows
+    files:
+      - README.md
+      - LICENSE
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -64,7 +72,7 @@ nfpms:
       - rpm
     dependencies:
       - git
-      - go
+      - golang
 publishers:
   - name: fury.io
     ids:
