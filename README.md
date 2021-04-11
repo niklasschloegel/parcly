@@ -1,3 +1,5 @@
+![Parcly Image](resources/parcly_image.jpg)
+
 # Parcly
 
 Parcly is a CLI app for tracking parcels.
