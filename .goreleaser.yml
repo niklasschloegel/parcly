@@ -65,9 +65,17 @@ brews:
 nfpms:
   - id: packages
     file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    license: Apache 2.0
+    formats:
+      - apk
+      - deb
+      - rpm
+    dependencies:
+      - git
+      - go
 publishers:
   - name: fury.io
     ids:
       - packages
     dir: "{{ dir .ArtifactPath }}"
-    cmd: curl -F package=@{{ .ArtifactName }} https://{{ .Env.FURY_TOKEN }}@push.fury.io/netdevops/
+    cmd: curl -F package=@{{ .ArtifactName }} https://{{ .Env.FURY_TOKEN }}@apt.fury.io/niklasschloegel/
