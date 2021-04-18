@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/niklasschloegel/parcly/config"
 )
@@ -74,7 +75,8 @@ func DoRequest(method, url string, requestStruct, responseStruct interface{}) er
 		if err := json.Unmarshal(responseBytes, &anyResp); err != nil {
 			return err
 		}
-		return errors.New(anyResp.Meta.Message)
+		msg := fmt.Sprintf("%s [Code: %s]", anyResp.Meta.Message, strconv.Itoa(anyResp.Meta.Code))
+		return errors.New(msg)
 	}
 
 	return nil

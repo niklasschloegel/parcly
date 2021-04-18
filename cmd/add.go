@@ -47,14 +47,6 @@ for the specific carrier code
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 1 {
 			trackingNr := args[0]
-			allTrackings := tracking.GetTrackings()
-
-			for _, t := range allTrackings {
-				if t.TrackingNumber == trackingNr {
-					fmt.Println("Tracking with tracking number", trackingNr, "already added.")
-					return
-				}
-			}
 
 			trackingCreation := tracking.TrackingCreation{TrackingNumber: trackingNr}
 			addOptions(&trackingCreation)

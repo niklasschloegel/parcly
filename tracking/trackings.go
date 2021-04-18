@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strings"
 
 	"github.com/niklasschloegel/parcly/config"
 )
@@ -163,18 +164,19 @@ func CreateTracking(tracking TrackingCreation) TrackingData {
 
 	err := DoRequest("POST", url, tracking, &trackingResponse)
 	if err != nil {
+		if strings.Contains(err.Error(), "[Code: 4031]") {
+			url := config.BasePath + "/trackings/realtime"
+			err := DoRequest("POST", url, tracking, &trackingResponse)
+			if err == nil {
+				return returnTracking(tracking, trackingResponse)
+			}
+		}
+
 		errOut := fmt.Errorf("error: %v", err)
 		fmt.Println(errOut.Error())
 		os.Exit(-1)
 	}
-
-	if tracking.Comment != "" {
-		// straight Update, because title cannot be set on first request
-		updateTracking := UpdateTracking{Title: tracking.Comment}
-		EditTrackings(tracking.CarrierCode, tracking.TrackingNumber, updateTracking)
-	}
-
-	return trackingResponse.Data.Items[0]
+	return returnTracking(tracking, trackingResponse)
 }
 
 // Requests all created tracking items.
@@ -263,4 +265,14 @@ func FilterCarrier(pattern string, trackings []TrackingData) ([]TrackingData, er
 
 	return filteredTrackings, nil
 
+}
+
+func returnTracking(tracking TrackingCreation, trackingResponse TrackingItems) TrackingData {
+	if tracking.Comment != "" {
+		// straight Update, because title cannot be set on first request
+		updateTracking := UpdateTracking{Title: tracking.Comment}
+		EditTrackings(tracking.CarrierCode, tracking.TrackingNumber, updateTracking)
+	}
+
+	return trackingResponse.Data.Items[0]
 }
