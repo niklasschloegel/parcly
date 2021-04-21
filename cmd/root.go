@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/niklasschloegel/parcly/config"
 	"github.com/spf13/cobra"
@@ -31,38 +31,6 @@ var rootCmd = &cobra.Command{
 	Use:   "parcly",
 	Short: "Simply tracks parcels",
 	Long:  `Parcly is a tool for tracking parcels.`,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		if config.TracktryApiKey == "" {
-			errorMsg := `API Key is missing.
-You need to provide an API Key from Tracktry.
-Sign up at https://www.tracktry.com/signup-en.html,
-and copy the API key under 'Settings'.
-
-The API Key can be provided in three ways:
-
-1) As a flag:
-	parcly <noun> <command> --tracktrykey <key>
-
-2) As an environment variable:
-	export PARCLY_TRACKTRYKEY=<key>
-
-3) In a config file:
-	default config file is $HOME/.parcly.yaml and should contain:
-	tracktrykey: <key>
-
-	When you want to use another location, you can
-	specify the location with another flag:
-	parcly ... --config <filepath>
-
-4) Through the config set command:
-	parcly config set --tracktry key
-	For more information see
-	parcly help config set
-			`
-			return errors.New(errorMsg)
-		}
-		return nil
-	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -88,9 +56,10 @@ func initConfig() {
 		home, err := homedir.Dir()
 		cobra.CheckErr(err)
 
+		config.ConfigFilePath = fmt.Sprintf("%s/.parcly.yaml", home)
+
 		// Search config in home directory with name ".parcly" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".parcly")
+		viper.SetConfigFile(config.ConfigFilePath)
 	}
 
 	viper.SetEnvPrefix("parcly")

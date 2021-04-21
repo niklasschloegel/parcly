@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/niklasschloegel/parcly/config"
@@ -35,7 +36,13 @@ var setCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if setApiKey != "" {
 			viper.Set(config.TrackTryConfigKey, setApiKey)
-			viper.WriteConfig()
+			err := viper.WriteConfigAs(config.ConfigFilePath)
+			if err != nil {
+				fmt.Println(err.Error())
+			} else {
+				fmt.Println("API Key successfully saved.")
+			}
+
 		} else {
 			cmd.Help()
 			os.Exit(0)

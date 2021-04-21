@@ -23,3 +23,30 @@ const (
 var TrackingStatuses = []string{"pending", "notfound", "transit", "pickup",
 	"delivered", "undelivered", "exception", "expired"}
 var TracktryApiKey string
+var ConfigFilePath string
+var ErrorMsg = `API Key is missing.
+You need to provide an API Key from Tracktry.
+Sign up at https://www.tracktry.com/signup-en.html,
+and copy the API key under 'Settings'.
+
+The API Key can be provided in three ways:
+
+1) As a flag:
+	parcly <noun> <command> --tracktrykey <key>
+
+2) As an environment variable:
+	export PARCLY_TRACKTRYKEY=<key>
+
+3) In a config file:
+	default config file is $HOME/.parcly.yaml and should contain:
+	tracktrykey: <key>
+
+	When you want to use another location, you can
+	specify the location with another flag:
+	parcly ... --config <filepath>
+
+4) Through the config set command:
+	parcly config set --tracktry key
+	For more information see
+	parcly help config set
+			`

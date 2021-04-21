@@ -16,6 +16,9 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
+
+	"github.com/niklasschloegel/parcly/config"
 	"github.com/spf13/cobra"
 )
 
@@ -25,6 +28,12 @@ var trackingCmd = &cobra.Command{
 	Use:   "tracking",
 	Short: "Managing tracking",
 	Long:  `Commands for managing trackings`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		if config.TracktryApiKey == "" {
+			return errors.New(config.ErrorMsg)
+		}
+		return nil
+	},
 }
 
 func init() {
