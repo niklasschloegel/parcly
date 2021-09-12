@@ -186,6 +186,9 @@ func GetTrackings() []TrackingData {
 
 	err := DoRequest("GET", url, nil, &trackingResponse)
 	if err != nil {
+		if strings.Contains(err.Error(), "4031") {
+			return trackingResponse.Data.Items
+		}
 		errOut := fmt.Errorf("error: %v", err)
 		fmt.Println(errOut.Error())
 		os.Exit(-1)
