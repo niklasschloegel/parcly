@@ -1,6 +1,6 @@
 module github.com/niklasschloegel/parcly
 
-go 1.16
+go 1.15
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0
