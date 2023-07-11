@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,13 +25,13 @@ import (
 	"github.com/niklasschloegel/parcly/config"
 )
 
-//----------------STRUCTS-------------------
+// ----------------STRUCTS-------------------
 type AnyResponse struct {
 	Meta Meta        `json:"meta"`
 	Data interface{} `json:"data"`
 }
 
-//------------Tracking Creation-------------
+// ------------Tracking Creation-------------
 type TrackingCreation struct {
 	TrackingNumber           string `json:"tracking_number"`
 	CarrierCode              string `json:"carrier_code"`
@@ -47,7 +47,7 @@ type TrackingCreation struct {
 	Comment                  string `json:"comment,omitempty"`
 }
 
-//------------Tracking Response------------
+// ------------Tracking Response------------
 type TrackingItems struct {
 	Meta Meta `json:"meta"`
 	Data struct {
@@ -114,12 +114,12 @@ func (t TrackingData) ShortInfo() string {
 	if t.OrderID != "" {
 		title += fmt.Sprintf("(#%s)", t.OrderID)
 	}
-	return fmt.Sprintf("[%s]\t@ %s - %s from %s (%s)", t.Status, t.UpdatedAt, title, t.CarrierCode, t.TrackingNumber)
+	return fmt.Sprintf("[%s] @ %s - %s from %s (%s)", t.Status, t.UpdatedAt, title, t.CarrierCode, t.TrackingNumber)
 }
 
 // Returns detailed information about TrackingData
 func (t TrackingData) Info() string {
-	info := t.ShortInfo() + "\n\tHistory:\n"
+	info := t.ShortInfo() + "\nHistory:\n"
 	for _, trackInfo := range append(t.OriginInfo.TrackInfo, t.DestinationInfo.TrackInfo...) {
 		info += trackInfo.Info() + "\n"
 	}
@@ -131,13 +131,13 @@ func (t TrackInfo) Info() string {
 	return fmt.Sprintf("\t[%s] @ %s\n\t- %s", t.CheckpointStatus, t.Date, t.StatusDescription)
 }
 
-//------------Tracking Deletion-------------
+// ------------Tracking Deletion-------------
 type DeletionResponse struct {
 	Meta Meta          `json:"meta"`
 	Data []interface{} `json:"data"`
 }
 
-//------------Tracking Update-------------
+// ------------Tracking Update-------------
 type UpdateTracking struct {
 	Title            string `json:"title,omitempty"`
 	LogisticsChannel string `json:"logistics_channel,omitempty"`
